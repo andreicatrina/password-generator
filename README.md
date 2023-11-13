@@ -1,6 +1,6 @@
-#Password Generator
+# Password Generator
 
-##Reactjs project
+## Reactjs project
 
 ### Run "npm start" in terminal & get random passwords
 
