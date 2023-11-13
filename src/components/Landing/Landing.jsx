@@ -11,29 +11,54 @@ import {
   PasswordSettingsContainer,
   PasswordStrengthContainer,
   RangeInput,
+  SuccessContainer,
 } from "./components";
 
 import { AiOutlineCopy } from "react-icons/ai";
 
 export const Landing = () => {
-  const [slide, setSlide] = useState(8);
-  const [uppercase, setUppercase] = useState(false);
-  const [lowercase, setLowercase] = useState(false);
-  const [number, setNumber] = useState(false);
-  const [symbol, setSymbol] = useState(false);
-  const [generatedPass, setGeneratedPass] = useState();
+  const [passwordLength, setPasswordLength] = useState(9);
+  const [password, setPassword] = useState("");
+  const [useUpperCase, setUseUppercase] = useState(false);
+  const [useLowerCase, setUseLowercase] = useState(false);
+  const [useNumbers, setUseNumbers] = useState(false);
+  const [useSymbols, setUseSymbols] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
 
   function sliderOnChange(e) {
     console.log(e.target.value);
-    setSlide(e.target.value);
+    setPasswordLength(e.target.value);
   }
 
+  const generatePassword = () => {
+    let charset = "";
+    let newPassword = "";
+
+    setError("");
+    if (!useSymbols && !useNumbers && !useLowerCase && !useUpperCase) {
+      setError("Please select at least one option!");
+    }
+
+    if (useSymbols) charset += "!@#$%^&*()";
+    if (useNumbers) charset += "0123456789";
+    if (useLowerCase) charset += "abcdefghijklmnopqrstuvwxyz";
+    if (useUpperCase) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    for (let i = 0; i < passwordLength; i++) {
+      newPassword += charset.charAt(Math.floor(Math.random() * charset.length));
+    }
+
+    setPassword(newPassword);
+    setSuccessMessage("");
+  };
+
   function uppercaseOnChange(e) {
-    if (uppercase == true) {
-      setUppercase(false);
+    if (useUpperCase == true) {
+      setUseUppercase(false);
       console.log(false);
     } else {
-      setUppercase(true);
+      setUseUppercase(true);
       console.log(true);
     }
     // console.log(e.target.value);
@@ -41,143 +66,43 @@ export const Landing = () => {
   }
 
   function lowercaseOnChange() {
-    if (lowercase == true) {
-      setLowercase(false);
+    if (useLowerCase == true) {
+      setUseLowercase(false);
     } else {
-      setLowercase(true);
+      setUseLowercase(true);
     }
   }
 
   function numberOnChange() {
-    if (number == true) {
-      setNumber(false);
+    if (useNumbers == true) {
+      setUseNumbers(false);
     } else {
-      setNumber(true);
+      setUseNumbers(true);
     }
   }
-
   function symbolsOnChange() {
-    if (symbol == true) {
-      setSymbol(false);
+    if (useSymbols == true) {
+      setUseSymbols(false);
     } else {
-      setSymbol(true);
+      setUseSymbols(true);
     }
   }
 
-  const uppercaseValues = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-  ];
+  const copyToClipboard = () => {
+    const el = document.createElement("textarea");
+    el.value = password;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+    setSuccessMessage("Password copied to clipboard!");
+    // setTimeout(() => setSuccessMessage(""), 2000);
+  };
 
-  const lowercaseValues = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-    "n",
-    "o",
-    "p",
-    "q",
-    "r",
-    "s",
-    "t",
-    "u",
-    "v",
-    "w",
-    "x",
-    "y",
-    "z",
-  ];
-
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
-  const symbols = ["!", "?", "-", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "[", "]"];
-
-  function generatePassword() {
-    let passLength = slide;
-    // console.log(passLength);
-
-    if (passLength == 8 && uppercase == true) {
-      upperLetters();
-    } else if (passLength == 8 && lowercase == true) {
-      lowerLetters();
-    } else if (passLength == 8 && number == true) {
-      includeNumbers();
-    } else if (passLength == 8 && symbol == true) {
-      includeSymbols();
-    } else if (passLength == 8 && uppercase == true && lowercase == true && number == true && symbol == true) {
-    }
-  }
-
-  function upperLetters() {
-    let retVal = [];
-    for (let i = 0; i < uppercaseValues.length; i++) {
-      retVal.push(uppercaseValues[Math.floor(Math.random() * uppercaseValues.length)]);
-      let chars = retVal.slice(0, slide);
-      setGeneratedPass(chars.join(""));
-      // console.log(chars);
-    }
-    return retVal;
-  }
-
-  function lowerLetters() {
-    let retVal = [];
-    for (let i = 0; i <= 8; i++) {
-      retVal.push(lowercaseValues[Math.floor(Math.random() * lowercaseValues.length)]);
-      let chars = retVal.slice(0, slide);
-      setGeneratedPass(chars.join(""));
-    }
-  }
-
-  function includeNumbers() {
-    let retVal = [];
-    for (let i = 0; i <= 8; i++) {
-      retVal.push(numbers[Math.floor(Math.random() * numbers.length)]);
-      let nums = retVal.slice(0, slide);
-      setGeneratedPass(nums.join(""));
-    }
-  }
-
-  function includeSymbols() {
-    let retVal = [];
-    for (let i = 0; i <= 8; i++) {
-      retVal.push(symbols[Math.floor(Math.random() * symbols.length)]);
-      let symb = retVal.slice(0, slide);
-      setGeneratedPass(symb.join(""));
-    }
-  }
+  const uppercaseValues = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+  const lowercaseValues = ["abcdefghijklmnopqrstuvwxyz"];
+  const numbers = ["0123456789"];
+  const symbols = ["!@#$%^&*()"];
 
   return (
     <LandingSection>
@@ -185,16 +110,20 @@ export const Landing = () => {
         <GeneratorContainer>
           <h2>Password Generator</h2>
           <GeneratedPasswordContainer>
-            <span>{generatedPass}</span>
-            <AiOutlineCopy />
+            <span>{password}</span>
+            <AiOutlineCopy onClick={copyToClipboard} />
           </GeneratedPasswordContainer>
+          <SuccessContainer>
+            <p>{successMessage ? "Password copied to clipboard" : null}</p>
+          </SuccessContainer>
           <GeneratorSettingsContainer>
             <CharacterLengthContainer>
               <span>Character Length</span>
-              <span>{slide}</span>
+              <span>{passwordLength}</span>
             </CharacterLengthContainer>
-            <RangeInput onChange={sliderOnChange} type="range" max="16" min="8" />
+            <RangeInput onChange={sliderOnChange} type="range" min="9" max="16" defaultValue={0} />
             <PasswordSettingsContainer>
+              <div style={{ color: "red" }}>{error}</div>
               <InputContainer>
                 <input onChange={uppercaseOnChange} type="checkbox" />
                 <span>Uppercase letters</span>
@@ -215,25 +144,13 @@ export const Landing = () => {
           </GeneratorSettingsContainer>
           <PasswordStrengthContainer>
             <span>STRENGTH</span>
-            <span>MEDIUM</span>
+            <span>{useSymbols && useNumbers && useLowerCase && useUpperCase ? "Strong" : "Weak"}</span>
           </PasswordStrengthContainer>
           <GenerateButtonContainer>
-            <button onClick={generatePassword}>GENERATE</button>
+            <button onClick={generatePassword}>{password ? "GENERATE NEW PASS" : "GENERATE"}</button>
           </GenerateButtonContainer>
         </GeneratorContainer>
       </LandingContainer>
     </LandingSection>
   );
 };
-
-// let arr = [];
-// let arr2 = [];
-// let arr3 = [];
-// arr.push(uppercaseValues[Math.floor(Math.random() * uppercaseValues.length)]);
-// console.log(arr);
-// arr2.push(uppercaseValues[Math.floor(Math.random() * uppercaseValues.length)]);
-// console.log(arr2);
-// arr3.push(uppercaseValues[Math.floor(Math.random() * uppercaseValues.length)]);
-// console.log(arr3);
-// let arr4 = arr.concat(arr2, arr3);
-// setGeneratedPass(arr4.join(""));

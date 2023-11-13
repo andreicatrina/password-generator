@@ -58,6 +58,16 @@ export const GeneratedPasswordContainer = styled.div`
   }
 `;
 
+export const SuccessContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    color: var(--color-buttons);
+  }
+`;
+
 export const GeneratorSettingsContainer = styled.div`
   display: flex;
   flex-direction: column;
